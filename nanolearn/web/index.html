@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>nanoLearn — teach a computer with your own spreadsheet</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark">🧠</div>
+    <div>
+      <div class="brand-name">nanoLearn</div>
+      <div class="brand-sub">Teach a computer using your own spreadsheet</div>
+    </div>
+  </div>
+  <div class="grow"></div>
+  <span class="pill" id="enginePill">checking…</span>
+  <button class="btn ghost small" id="installBtn">Install full engine</button>
+  <button class="btn ghost small" id="settingsBtn">⚙︎</button>
+</header>
+
+<nav class="steps" id="steps">
+  <button class="step" data-step="data"><span>1</span> Give it a spreadsheet</button>
+  <button class="step" data-step="understand"><span>2</span> Say what to predict</button>
+  <button class="step" data-step="learn"><span>3</span> Let it practise</button>
+  <button class="step" data-step="result"><span>4</span> See how it did</button>
+  <button class="step" data-step="try"><span>5</span> Use it</button>
+</nav>
+
+<main id="main">
+
+  <!-- ------------------------------------------------------- 1. the file -->
+  <section class="panel" id="panel-data">
+    <div class="drop" id="drop">
+      <div class="drop-inner">
+        <div class="drop-icon">📄</div>
+        <h2>Drop your spreadsheet here</h2>
+        <p>A <b>.csv</b> file works best — the kind Excel or Google Sheets saves.
+           Nothing leaves this computer.</p>
+        <button class="btn primary" id="browseBtn">Choose a file</button>
+        <input type="file" id="fileInput" accept=".csv,.tsv,.txt" hidden>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h3>No file handy? Try an example</h3>
+        <p class="muted">Both are tiny and come with the app.</p>
+        <div class="sample-list" id="sampleList"></div>
+      </div>
+      <div class="card">
+        <h3>Files you have already used</h3>
+        <p class="muted">Kept in your own folder, never uploaded.</p>
+        <div class="sample-list" id="fileList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------- 2. what to predict -->
+  <section class="panel" id="panel-understand" hidden>
+    <div class="card">
+      <h3 id="fileName">your file</h3>
+      <p id="summary" class="muted"></p>
+      <div class="stats" id="stats"></div>
+    </div>
+
+    <div class="card highlight">
+      <div class="label">Step 2</div>
+      <h2 class="question" id="guessReason">Looking at your columns…</h2>
+      <div class="row">
+        <div class="field">
+          <label for="targetSelect">What would you like it to predict?</label>
+          <select id="targetSelect"></select>
+        </div>
+        <div class="field">
+          <label for="taskSelect">That column is…</label>
+          <select id="taskSelect">
+            <option value="classification">a category (a label, a yes/no, a type)</option>
+            <option value="regression">a number (a price, a size, a score)</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn primary big" id="teachBtn">Teach it</button>
+        <label class="switch"><input type="checkbox" id="useFull"> Use the full engine if available</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>The first few rows</h3>
+      <div class="table-wrap" id="preview"></div>
+    </div>
+
+    <div class="card">
+      <h3>Your columns</h3>
+      <p class="muted">The chart shows what is in a column. Click a column to see its own chart.</p>
+      <div class="column-list" id="columnList"></div>
+      <div class="chart" id="chart"></div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------- 3. practising -->
+  <section class="panel" id="panel-learn" hidden>
+    <div class="card">
+      <h2 id="learnTitle">Teaching it…</h2>
+      <p class="muted" id="learnSub">You can leave this window open; it takes a few seconds.</p>
+      <div class="bar big-bar"><span id="learnBar"></span></div>
+      <div class="log" id="learnLog"></div>
+    </div>
+  </section>
+
+  <!-- --------------------------------------------------------- 4. the result -->
+  <section class="panel" id="panel-result" hidden>
+    <div class="card highlight">
+      <div class="label">The answer</div>
+      <div class="score-big" id="scoreBig">—</div>
+      <p id="resultSentence" class="lead"></p>
+      <div class="row">
+        <button class="btn primary" id="useItBtn">Use it on new values</button>
+        <button class="btn" id="reportBtn">Download a report</button>
+        <button class="btn ghost" id="retryBtn">Try a different column</button>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h3>What it tried</h3>
+        <div class="table-wrap" id="leaderboard"></div>
+      </div>
+      <div class="card">
+        <h3>What matters most</h3>
+        <p class="muted">Which columns actually drove the answer.</p>
+        <div id="importance"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Test rows it had never seen</h3>
+      <p class="muted">Kept back on purpose, so the score above is honest.</p>
+      <div class="table-wrap" id="examples"></div>
+    </div>
+
+    <div class="card" id="droppedCard" hidden>
+      <h3>Columns left out</h3>
+      <p class="muted" id="droppedReason"></p>
+      <div id="droppedList"></div>
+    </div>
+  </section>
+
+  <!-- ------------------------------------------------------------ 5. using it -->
+  <section class="panel" id="panel-try" hidden>
+    <div class="card">
+      <h2 id="tryTitle">Ask it about a new case</h2>
+      <p class="muted">Fill in what you know. Anything you leave blank is ignored.</p>
+      <div class="form-grid" id="predictForm"></div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn primary" id="predictBtn">What is the answer?</button>
+        <button class="btn ghost" id="clearBtn">Clear</button>
+      </div>
+      <div class="answer" id="answer" hidden></div>
+    </div>
+
+    <div class="card">
+      <h3>Or run it over a whole file</h3>
+      <p class="muted">Give it a spreadsheet with the same columns and it will add a guess column to every row.</p>
+      <div class="drop small" id="dropPredict">
+        <div class="drop-inner">
+          <div class="drop-icon">📊</div>
+          <p><b>Drop a .csv here</b> to get a file of guesses back</p>
+        </div>
+      </div>
+      <div id="predictResult"></div>
+    </div>
+
+    <div class="card">
+      <h3>What it learned</h3>
+      <div id="modelInfo" class="muted"></div>
+    </div>
+  </section>
+</main>
+
+<div class="backdrop" id="settingsModal">
+  <div class="modal">
+    <div class="modal-head"><h2>Settings</h2>
+      <button class="btn ghost small" data-close="settingsModal">✕</button></div>
+    <div class="modal-body">
+      <div class="group">
+        <h3>How it practises</h3>
+        <div class="field">
+          <label for="testFraction">Share of rows kept back for the exam</label>
+          <input type="number" id="testFraction" min="0.1" max="0.5" step="0.05">
+          <div class="hint">The rest is used for practising. More practise data usually means a better
+            model; more exam data means a more trustworthy score.</div>
+        </div>
+        <div class="field">
+          <label for="seedInput">Random starting point</label>
+          <input type="number" id="seedInput" min="0" step="1">
+          <div class="hint">Same number, same result — so runs can be repeated exactly.</div>
+        </div>
+      </div>
+      <div class="group">
+        <h3>Engines</h3>
+        <p class="help" id="engineHelp">…</p>
+        <div class="log" id="installLog"></div>
+      </div>
+      <div class="group">
+        <h3>Where your files live</h3>
+        <p class="help" id="aboutInfo">…</p>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn primary" data-close="settingsModal">Save and close</button></div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+<script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nanolearn"
+version = "0.1.0"
+description = "Drop a spreadsheet, get an answer machine. Machine learning with no code."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Priyanshu Agarwal" }]
+keywords = ["automl", "no-code", "machine-learning", "csv", "gui", "offline"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: End Users/Desktop",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+# Nothing is required. scikit-learn is an optional upgrade, installed from the
+# app itself with one click, or with: pip install nanolearn[full]
+dependencies = []
+
+[project.optional-dependencies]
+full = ["scikit-learn>=1.0"]
+
+[project.scripts]
+nanolearn = "nanolearn.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/Agarwalrishu13/nanolearn"
+
+[tool.setuptools]
+packages = ["nanolearn"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+nanolearn = ["web/*"]

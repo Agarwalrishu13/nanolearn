@@ -1,0 +1,7 @@
+# nanoLearn needs nothing from this file — the app and its built-in learning
+# engine are pure Python standard library.
+#
+# The two lines below are the *optional* upgrade. You do not have to run this:
+# open the app and press "Install full engine", which does the same thing with
+# the output visible on screen.
+scikit-learn>=1.0
